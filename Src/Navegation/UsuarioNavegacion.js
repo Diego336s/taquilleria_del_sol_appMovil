@@ -13,7 +13,7 @@ export default function         UsuarioNavegacion({logout}){
         <Tab.Navigator
         screenOptions={{
             tabBarStyle:{
-                backgroundColor: "#110d46ff",
+                backgroundColor: "#FF6B00",
                 borderTopWidth: 1,
                 borderTopColor: "#f4f4f4ff",
                 height: 60,
@@ -21,7 +21,7 @@ export default function         UsuarioNavegacion({logout}){
                
             },
             tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "#b3a5a5ff",
+            tabBarInactiveTintColor: "#e9bdbdff",
             tabBarLabelStyle:{
                 fontSize: 12,
                 fontWeight: "600",

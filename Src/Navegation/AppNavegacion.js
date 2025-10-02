@@ -64,9 +64,9 @@ export default function AppNavegacion() {
     return (
         <NavigationContainer>
             {!userToken ? (
-               <UsuarioNavegacion logout={logout} /> 
-            ) : (
                 <AuthNavegacion />
+            ) : (
+                <UsuarioNavegacion logout={logout} />
             )}
         </NavigationContainer>
     );
