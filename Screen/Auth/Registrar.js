@@ -30,30 +30,35 @@ export default function Registro({ navigation }) {
   const [cargando, setCargando] = useState(false);
 
   const handleRegistro = async () => {
-     setCargando(true);
+    setCargando(true);
     if (!nombre || !documento || !fechaNacimiento || !telefono || !email || !password || !confirmarClave || !sexo) {
       Alert.alert("Error de campos ☹️", "Debes rellenar todos los campos requerido");
-       setCargando(false);
+      setCargando(false);
       return;
     }
     if (telefono.length !== 10) {
       Alert.alert("Error de telefono 📞", "El telefono debe tener 10 digitos");
-       setCargando(false);
+      setCargando(false);
       return;
     }
     if (password !== confirmarClave) {
       Alert.alert("Error de contraseña 🔒", "Las contraseñan no coinciden");
-       setCargando(false);
+      setCargando(false);
+      return;
+    }
+    if (password.length < 6 || confirmarClave.length < 6) {
+      Alert.alert("Error de contraseña 🔒", "La contraseña debe tener minimo 6 caracteres");
+      setCargando(false);
       return;
     }
     const response = await registrar(nombre, apellido, documento, fechaNacimiento, sexo, telefono, email, password);
     if (!response?.success) {
       Alert.alert("Error de registro 📝", response?.message);
-       setCargando(false);
+      setCargando(false);
       return;
     }
     Alert.alert("Registro exitoso ✅", response?.message);
-     setCargando(false);
+    setCargando(false);
 
   };
 
@@ -242,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.4)", // 👈 inputs semitransparentes
     color: "#090909ff",
   },
-   select: {
+  select: {
     width: "100%",
     borderRadius: 8,
     padding: 2,
