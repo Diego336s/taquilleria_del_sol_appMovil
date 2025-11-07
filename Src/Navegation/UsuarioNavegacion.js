@@ -8,12 +8,12 @@ import Feather from '@expo/vector-icons/Feather';
 
 const Tab = createBottomTabNavigator();
 
-export default function         UsuarioNavegacion({logout}){
+export default function         UsuarioNavegacion(){
     return(
         <Tab.Navigator
         screenOptions={{
             tabBarStyle:{
-                backgroundColor: "#FF6B00",
+                backgroundColor: "#a34022ff",
                 borderTopWidth: 1,
                 borderTopColor: "#f4f4f4ff",
                 height: 60,
@@ -57,9 +57,7 @@ export default function         UsuarioNavegacion({logout}){
 
           <Tab.Screen 
             name="Configuracion"
-            children={(props)=>(
-            <Configuraciones_Stack {...props} logout={logout}/>
-        )}
+            component={Configuraciones_Stack}
             options={{
                 headerShown: false,
                 tabBarIcon:({color, size}) =>(
@@ -67,7 +65,9 @@ export default function         UsuarioNavegacion({logout}){
                 )
             }}
             />
-
+            
+           
+   
         </Tab.Navigator>
     )
 }

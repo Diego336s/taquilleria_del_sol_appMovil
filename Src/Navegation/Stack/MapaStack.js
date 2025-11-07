@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Configuraciones from "../../../Screen/Configuraciones/Configuraciones";
+import Mapa from "../../../Screen/Mapa/Mapa";
 
 const Stack = createNativeStackNavigator();
 
-export default function ConfiguracionesStack() {
+export default function UsuarioStack() {
     return (
         <Stack.Navigator
          screenOptions={{
@@ -12,9 +12,9 @@ export default function ConfiguracionesStack() {
                 headerTitleStyle: { fontWeight: "bold" }, // Opcional: estilo del título
             }}>
             <Stack.Screen
-                name="ConfiguracionesScreen"
-                component={Configuraciones}
-                options={{ title: "Configuraciones" }}
+                name="Mapa"
+                component={Mapa}
+                options={{ title: "Teatro"}}
             />
         </Stack.Navigator>
     );

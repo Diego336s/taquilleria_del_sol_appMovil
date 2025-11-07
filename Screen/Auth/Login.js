@@ -12,20 +12,28 @@ import {
   Image, 
   ImageBackground 
 } from "react-native";
+import { login } from "../../Src/Navegation/Service/AuthService";
 
 export default function LoginUsuario({ navigation }) {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
+const [cargando, setCargando] = useState(false);
+  const handleLogin = async () => {
+    setCargando(true);
     if (!correo || !password) {
       Alert.alert("Error", "Debes completar todos los campos");
+      setCargando(false);
       return;
     }
-
-    console.log("Usuario:", correo, "Password:", password);
+    const response = await login(correo, password);
+    if(!response.success){
+       Alert.alert("Error al iniciar sesion", response.message);
+        setCargando(false);
+       return;
+    }   
     Alert.alert("Éxito", "Bienvenido a Taquillería del Sol 🎭");
-    navigation.navigate("Dashboard");
+     setCargando(false);
+   
   };
 
   return (
@@ -67,11 +75,11 @@ export default function LoginUsuario({ navigation }) {
                 onChangeText={setPassword}
               />          
 
-              <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <TouchableOpacity style={styles.button} disabled={cargando} onPress={()=> handleLogin()}>
                 <Text style={styles.buttonText}>Iniciar Sesión</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => Alert.alert("Recuperar", "Función de recuperar contraseña")}>
+              <TouchableOpacity onPress={() => navigation.navigate("OlvideMiClaveStack")}>
                 <Text style={styles.linkOlvidePassword}>¿Olvidaste tu contraseña?</Text>
               </TouchableOpacity>
 

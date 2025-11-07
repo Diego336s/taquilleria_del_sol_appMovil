@@ -1,17 +1,20 @@
 
 import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Platform, 
-  KeyboardAvoidingView, 
-  ScrollView, 
-  ImageBackground 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  KeyboardAvoidingView,
+  ScrollView,
+  ImageBackground,
+  Alert
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { registrar } from "../../Src/Navegation/Service/AuthService";
+import { Picker } from "@react-native-picker/picker";
 
 export default function Registro({ navigation }) {
   const [nombre, setNombre] = useState("");
@@ -23,10 +26,35 @@ export default function Registro({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmarClave, setConfirmarClave] = useState("");
+  const [sexo, setSexo] = useState("");
+  const [cargando, setCargando] = useState(false);
 
-  const handleRegistro = () => {
-    console.log("Datos enviados:", { nombre, apellido, documento, fechaNacimiento, telefono, email, password });
-    // Aquí puedes hacer la petición a tu API
+  const handleRegistro = async () => {
+     setCargando(true);
+    if (!nombre || !documento || !fechaNacimiento || !telefono || !email || !password || !confirmarClave || !sexo) {
+      Alert.alert("Error de campos ☹️", "Debes rellenar todos los campos requerido");
+       setCargando(false);
+      return;
+    }
+    if (telefono.length !== 10) {
+      Alert.alert("Error de telefono 📞", "El telefono debe tener 10 digitos");
+       setCargando(false);
+      return;
+    }
+    if (password !== confirmarClave) {
+      Alert.alert("Error de contraseña 🔒", "Las contraseñan no coinciden");
+       setCargando(false);
+      return;
+    }
+    const response = await registrar(nombre, apellido, documento, fechaNacimiento, sexo, telefono, email, password);
+    if (!response?.success) {
+      Alert.alert("Error de registro 📝", response?.message);
+       setCargando(false);
+      return;
+    }
+    Alert.alert("Registro exitoso ✅", response?.message);
+     setCargando(false);
+
   };
 
   const onChangeFecha = (event, selectedDate) => {
@@ -41,7 +69,7 @@ export default function Registro({ navigation }) {
       style={{ flex: 1 }}
     >
       {/* 👇 Fondo de pantalla */}
-      <ImageBackground 
+      <ImageBackground
         source={require("../../IMG/fondo.jpg")} // 👉 aquí colocas tu imagen de fondo
         style={styles.background}
       >
@@ -92,6 +120,16 @@ export default function Registro({ navigation }) {
                 />
               )}
 
+              <Text style={styles.label}>Sexo:</Text>
+              <Picker
+                selectedValue={sexo}
+                onValueChange={(itemValue) => setSexo(itemValue)}
+                style={styles.select}
+              >
+                <Picker.Item label="Seleccione..." value="" />
+                <Picker.Item label="Masculino" value="M" />
+                <Picker.Item label="Femenino" value="F" />
+              </Picker>
               <Text style={styles.label}>Teléfono</Text>
               <TextInput
                 style={styles.input}
@@ -132,7 +170,7 @@ export default function Registro({ navigation }) {
                 onChangeText={setConfirmarClave}
               />
 
-              <TouchableOpacity style={styles.boton} onPress={handleRegistro}>
+              <TouchableOpacity style={styles.boton} disabled={cargando} onPress={handleRegistro}>
                 <Text style={styles.botonTexto}>Registrar</Text>
               </TouchableOpacity>
 
@@ -157,7 +195,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     resizeMode: "cover"
-   
+
   },
   scroll: {
     flexGrow: 1,
@@ -182,9 +220,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     color: "#ffffffff", // 👈 para contraste
-   textShadowColor: "#000", // 👈 color del borde (sombra)
-  textShadowOffset: { width: 2, height: 2 }, // 👈 desplazamiento de la sombra
-  textShadowRadius: 1, // 👈 difuminado, si lo quieres más sólido ponlo en 0
+    textShadowColor: "#000", // 👈 color del borde (sombra)
+    textShadowOffset: { width: 2, height: 2 }, // 👈 desplazamiento de la sombra
+    textShadowRadius: 1, // 👈 difuminado, si lo quieres más sólido ponlo en 0
   },
   label: {
     marginTop: 10,
@@ -193,14 +231,22 @@ const styles = StyleSheet.create({
     color: "#ffffffff", // 👈 Blanco para resaltar
     alignSelf: "flex-start",
     textShadowColor: "#000", // 👈 color del borde (sombra)
-  textShadowOffset: { width: 2, height: 2 }, // 👈 desplazamiento de la sombra
-  textShadowRadius: 1, // 👈 difuminado, si lo quieres más sólido ponlo en 0
+    textShadowOffset: { width: 2, height: 2 }, // 👈 desplazamiento de la sombra
+    textShadowRadius: 1, // 👈 difuminado, si lo quieres más sólido ponlo en 0
   },
   input: {
     width: "100%",
     borderRadius: 8,
     padding: 12,
-    marginBottom: 10,    
+    marginBottom: 10,
+    backgroundColor: "rgba(255,255,255,0.4)", // 👈 inputs semitransparentes
+    color: "#090909ff",
+  },
+   select: {
+    width: "100%",
+    borderRadius: 8,
+    padding: 2,
+    marginBottom: 10,
     backgroundColor: "rgba(255,255,255,0.4)", // 👈 inputs semitransparentes
     color: "#090909ff",
   },

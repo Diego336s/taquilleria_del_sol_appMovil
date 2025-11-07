@@ -43,21 +43,14 @@ export default function AppNavegacion() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log("⏳ Verificando token cada 5 minutos...");
+
             loadToken();
-        }, 5 * 60 * 1000); // 5 minutos en milisegundos
+        }, 2000); // 2 segundos
 
         return () => clearInterval(interval);
     }, []);
 
-    const logout = async () => {
-        try {
-            await AsyncStorage.removeItem("userToken");
-            setUserToken(null); // 👈 esto actualiza la navegación al instante
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-        }
-    };
+
 
 
 
@@ -66,7 +59,7 @@ export default function AppNavegacion() {
             {!userToken ? (
                 <AuthNavegacion />
             ) : (
-                <UsuarioNavegacion logout={logout} />
+                <UsuarioNavegacion />
             )}
         </NavigationContainer>
     );

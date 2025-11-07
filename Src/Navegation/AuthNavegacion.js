@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../../Screen/Auth/Login";
 import Registro from "../../Screen/Auth/Registrar";
+import OlvideMiClaveStack from "./Stack/OlvideClaveStack";
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavegacion() {
@@ -21,6 +22,11 @@ export default function AuthNavegacion() {
                 name="RegistrarCliente"
                 component={Registro}
                 options={{ title: "Registrar" }}
+            />
+             <Stack.Screen
+                name="OlvideMiClaveStack"
+                component={OlvideMiClaveStack}
+                options={{headerShown: false}}
             />
         </Stack.Navigator>
     );

@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const URL = "http://10.2.232.53:8000/api";
+const URL = "https://uncoachable-rosaline-lasciviously.ngrok-free.dev/api";
 
 const api = axios.create({
     baseURL: URL,
@@ -11,10 +11,14 @@ const api = axios.create({
     },
 });
 
+//Rutas de api que no requiren autenticacion
 const RutasPublicas = [
     "/login/cliente",
-    "/registrar/cliente"    
-]; //Rutas de api que no requiren autenticacion
+    "/registrar/cliente",
+    "envio/codigo/verificacion",
+    "verificar/codigo",
+    "olvide/clave/cliente" 
+]; 
 
 api.interceptors.request.use(
     async (config) => {
