@@ -1,3 +1,4 @@
+
 import api from "./Conexion"
 
 
@@ -28,3 +29,6 @@ export const actualizarPerfil = async (id, nombre, apellido, telefono, sexo) => 
 
     }
 }
+
+
+

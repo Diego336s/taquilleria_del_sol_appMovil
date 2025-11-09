@@ -35,7 +35,7 @@ export default function PerfilCliente({ navigation }) {
                 <View style={styles.container}>
                      <ActivityIndicator size="large" color="#f2f2f2ff" />
                     <Text style={{textAlign: "center", paddingTop: 35 , color: "white", fontFamily:30}}>
-                        Cargadon informacion....
+                        Cargando informacion....
                     </Text>
                 </View>
             </ScrollView>
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     botonEditar: {
-        backgroundColor: "#2563EB",
+        backgroundColor: "#74562bff",
         paddingVertical: 12,
         paddingHorizontal: 40,
         borderRadius: 10,

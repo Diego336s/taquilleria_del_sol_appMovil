@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Mapa from "../../../Screen/Mapa/Mapa";
+import Mapa from "../../../Screen/Teatro/Mapa";
 
 const Stack = createNativeStackNavigator();
 

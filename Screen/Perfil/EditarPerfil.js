@@ -98,7 +98,7 @@ export default function EditarPerfil({ navigation }) {
                 <View style={styles.container}>
                     <ActivityIndicator size="large" color="#f2f2f2ff" />
                     <Text style={{ textAlign: "center", paddingTop: 35, color: "white", fontFamily: 30 }}>
-                        Cargadon informacion....
+                        Cargando informacion....
                     </Text>
                 </View>
             </ScrollView>
@@ -159,7 +159,7 @@ export default function EditarPerfil({ navigation }) {
                         <TextInput
                             style={styles.inputNoEditable}
                             placeholder="ejemplo@email.com"
-                            placeholderTextColor="#030303ff"
+                            placeholderTextColor="#ffffffff"
                             keyboardType="email-address"
                             editable={false}
                             value={email}
@@ -171,11 +171,7 @@ export default function EditarPerfil({ navigation }) {
 
                         <TouchableOpacity style={styles.boton} disabled={cargando} onPress={handleActualizar}>
                             <Text style={styles.botonTexto}>Guardar cambios</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.botonCancelar} disabled={cargando} onPress={() => navigation.navigate("PerfilUsuario")}>
-                            <Text style={styles.botonTexto}>Cancelar</Text>
-                        </TouchableOpacity>
-
+                        </TouchableOpacity>                      
                     </View>
                 </View>
             </ScrollView>
@@ -243,7 +239,7 @@ const styles = StyleSheet.create({
         padding: 12,
         marginBottom: 10,
         backgroundColor: "rgba(65, 32, 32, 0.4)", // 👈 inputs semitransparentes
-        color: "#090909ff",
+        color: "#ffffffff",
     },
     select: {
         width: "100%",
@@ -255,7 +251,7 @@ const styles = StyleSheet.create({
         color: "#090909ff",
     },
     boton: {
-        backgroundColor: "#1E5EFF",
+        backgroundColor: "#ed9417ff",
         padding: 15,
         borderRadius: 8,
         alignItems: "center",
@@ -263,7 +259,7 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     botonCancelar: {
-        backgroundColor: "#cc312cff",
+        backgroundColor: "#f1807cff",
         padding: 15,
         borderRadius: 8,
         alignItems: "center",

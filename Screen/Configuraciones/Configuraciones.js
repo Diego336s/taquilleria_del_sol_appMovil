@@ -26,10 +26,10 @@ export default function ConfiguracionesScreen({ navigation }) {
       {/* Sección: Cuenta */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Cuenta</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Cambiar_clave")} style={styles.option}>
+        <TouchableOpacity onPress={() => navigation.navigate("CambiarClave")} style={styles.option}>
           <Text style={styles.optionText}>🔑 Cambiar Contraseña</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Cambiar_correo")} style={styles.option}>
+        <TouchableOpacity onPress={() => navigation.navigate("CambiarCorreo")} style={styles.option}>
           <Text style={styles.optionText}>📧 Cambiar Correo</Text>
         </TouchableOpacity>
       </View>

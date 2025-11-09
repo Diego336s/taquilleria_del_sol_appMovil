@@ -157,3 +157,57 @@ export const restablecerClave = async (correo, clave) => {
       }
     }
 }
+
+
+
+
+export const cambiarClave = async (id, clave) => {
+    try {
+        const response = await api.put("cambiar/clave/cliente/" + id, {
+            clave
+        });
+        if (!response.data.success) {
+            return {
+                success: false,
+                message: response.data.message
+            }
+        }
+        return {
+            success: true,
+            message: response.data.message
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message || response.error || "Error inesperado en el servidor"
+        }
+
+    }
+}
+
+
+
+export const cambiarCorreo = async (id, correo) => {
+    try {
+        const response = await api.put("cambiar/correo/cliente/" + id, {
+            correo
+        });
+        if (!response.data.success) {
+            return {
+                success: false,
+                message: response.data.message
+            }
+        }
+      
+        return {
+            success: true,
+            message: response.data.message
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message || response.error || "Error inesperado en el servidor"
+        }
+
+    }
+}

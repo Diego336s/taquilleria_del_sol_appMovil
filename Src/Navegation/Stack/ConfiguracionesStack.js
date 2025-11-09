@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Configuraciones from "../../../Screen/Configuraciones/Configuraciones";
-
+import Cambiar_clave from "../../../Screen/Configuraciones/CambiarClave";
+import Cambiar_correo from "../../../Screen/Configuraciones/CambiarCorreo";
 const Stack = createNativeStackNavigator();
 
 export default function ConfiguracionesStack() {
@@ -15,6 +16,16 @@ export default function ConfiguracionesStack() {
                 name="ConfiguracionesScreen"
                 component={Configuraciones}
                 options={{ title: "Configuraciones" }}
+            />
+            <Stack.Screen
+                name="CambiarClave"
+                component={Cambiar_clave}
+                options={{ title: "Cambio de contraseña" }}
+            />
+            <Stack.Screen
+                name="CambiarCorreo"
+                component={Cambiar_correo}
+                options={{ title: "Cambio de correo" }}
             />
         </Stack.Navigator>
     );
