@@ -15,11 +15,13 @@ import { Ionicons } from "@expo/vector-icons";
 import api from "../../Src/Navegation/Service/Conexion";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-
+import ChatBot from "../../Components/ChatBot"
 export default function Dashboard({ navigation }) {
   const [usuario, setUsuario] = useState(null);
   const [eventos, setEventos] = useState(null);
   const [cargandoEventos, setCargandoEventos] = useState(false);
+  const [expandedItems, setExpandedItems] = useState({});
+
   useEffect(() => {
     const cargarPerfil = async () => {
       try {
@@ -54,8 +56,8 @@ export default function Dashboard({ navigation }) {
       }
       setEventos(response?.data?.eventos);
       setCargandoEventos(false);
-       console.log("Eventos cargados");
-       console.log(response.data.eventos);
+      console.log("Eventos cargados");
+      console.log(response.data.eventos);
     } catch (error) {
       Alert.alert("Error ❌", error.message || error.response.message || "Error inesperado al mostrar los eventos vigentes.")
       setCargandoEventos(false);
@@ -68,9 +70,17 @@ export default function Dashboard({ navigation }) {
   );
 
 
+  const toggleExpand = (id) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
 
-    <ScrollView  contentContainerStyle={styles.scroll}>
+    <ScrollView contentContainerStyle={styles.scroll}>
+      
       <View style={styles.background}>
         {/* Header */}
         <View style={styles.header}>
@@ -78,8 +88,8 @@ export default function Dashboard({ navigation }) {
           {usuario?.sexo === "F" ? (
             <Text style={styles.saludo}>¡Bienvenida, {usuario?.nombre}! 👋</Text>
           ) : (
-              <Text style={styles.saludo}>¡Bienvenido, {usuario?.nombre}! 👋</Text>
-            )}
+            <Text style={styles.saludo}>¡Bienvenido, {usuario?.nombre}! 👋</Text>
+          )}
           <TouchableOpacity onPress={() => { navigation.navigate("MapaStack"); }} style={styles.btnHeader}>
             <Text style={styles.btnText}>Explorar Teatro</Text>
           </TouchableOpacity>
@@ -103,7 +113,7 @@ export default function Dashboard({ navigation }) {
         <View style={styles.proximaFuncion}>
           <Text style={styles.proximaTitle}>🎭 Su Próxima Función</Text>
           <Text style={styles.proximaObra}>Don Juan Tenorio</Text>
-          <Text style={styles.proximaDetalle}>📅 12 Enero ⏰ 8:30 PM 🎟️ Palco A12, A13</Text>
+          <Text style={styles.proximaDetalle}>📅 12 Enero ⏰ 8:30 PM 🎟 Palco A12, A13</Text>
           <TouchableOpacity style={styles.btnDetalle}>
             <Text style={styles.btnDetalleText}>Ver Detalles</Text>
           </TouchableOpacity>
@@ -112,16 +122,16 @@ export default function Dashboard({ navigation }) {
         {/* Cartelera */}
         <Text style={styles.carteleraTitle}>Cartelera Actual</Text>
         {cargandoEventos === true && !eventos && (
-          <View style={{backgroundColor:"#2B1B1B"}}>
+          <View style={{ backgroundColor: "#2B1B1B" }}>
             <ActivityIndicator size="large" color="#f2f2f2ff" />
-            <Text style={{  textAlign: "center", paddingTop: 35, color: "white", fontFamily: 30 }}>
+            <Text style={{ textAlign: "center", paddingTop: 35, color: "white", fontFamily: 30 }}>
               Cargando Eventos....
             </Text>
           </View>
         )}
 
-        {cargandoEventos === false && eventos === null  ? (
-          <View style={{backgroundColor:"#2B1B1B"}}>
+        {cargandoEventos === false && eventos === null ? (
+          <View style={{ backgroundColor: "#2B1B1B" }}>
 
             <Text style={{ textAlign: "center", paddingTop: 35, color: "white", fontFamily: 30 }}>
               No hay eventos vigentes o registrados
@@ -133,23 +143,50 @@ export default function Dashboard({ navigation }) {
             data={eventos}
             keyExtractor={(item) => item.id}
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.obraCard}>
-                <Image source={{ uri: item.imagen }} style={styles.obraImage} />
-                <View style={styles.obraInfo}>
-                  <Text style={styles.obraCategoria}>{item.categoria.nombre}</Text>
-                  <Text style={styles.obraTitulo}>{item.titulo}</Text>
-                  <Text style={styles.obraDesc}>{item.descripcion}</Text>
-                  <Text style={styles.obraFecha}>📅 {item.fecha} ⏰ {item.hora_inicio} - {item.hora_final}</Text>                 
-                  <TouchableOpacity style={styles.btnReservar}>
-                    <Text style={styles.btnReservarText}>Reservar</Text>
-                  </TouchableOpacity>
+            renderItem={({ item }) => {
+              const expanded = expandedItems[item.id] || false;
+
+              const descripcionRecortada =
+                !expanded && item.descripcion.length > 50
+                  ? item.descripcion.substring(0, 50) + "..."
+                  : item.descripcion;
+
+              return (
+                <View style={styles.obraCard}>
+                  <Image source={{ uri: item.imagen }} style={styles.obraImage} />
+                  <View style={styles.obraInfo}>
+                    <Text style={styles.obraCategoria}>{item.categoria.nombre}</Text>
+                    <Text style={styles.obraTitulo}>{item.titulo}</Text>
+
+                    <Text style={styles.obraDesc}>
+                      {descripcionRecortada}
+                      {item.descripcion.length > 50 && (
+                        <Text
+                          style={{ color: "#4C9BFF" }}
+                          onPress={() => toggleExpand(item.id)}
+                        >
+                          {expanded ? " Leer menos" : " Leer más"}
+                        </Text>
+                      )}
+                    </Text>
+
+                    <Text style={styles.obraFecha}>
+                      📅 {item.fecha} ⏰ {item.hora_inicio} - {item.hora_final}
+                    </Text>
+
+                    <TouchableOpacity onPress={()=>{navigation.navigate("MapaEvento",{id: item.id})}} style={styles.btnReservar}>
+                      <Text style={styles.btnReservarText}>Reservar</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            )}
+              );
+            }}
+
+
           />
         )}
       </View>
+      <ChatBot/>
     </ScrollView>
 
 
@@ -158,8 +195,8 @@ export default function Dashboard({ navigation }) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-     backgroundColor: "#2B1B1B",
-    
+    backgroundColor: "#2B1B1B",
+
   },
   scroll: {
     padding: 20,
