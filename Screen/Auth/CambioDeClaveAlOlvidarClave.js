@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 
 import { CommonActions, useRoute } from "@react-navigation/native";
 
-import { restablecerClave  } from "../../Src/Navegation/Service/AuthService";
+import { restablecerClave } from "../../Src/Navegation/Service/AuthService";
 export default function EnvioCodigoDeVerificacion({ navigation }) {
-    const route = useRoute();  
+    const route = useRoute();
     const correo = route.params.correo;
 
     const [clave, setClave] = useState("");
@@ -96,7 +96,12 @@ export default function EnvioCodigoDeVerificacion({ navigation }) {
                         />
                     </View>
                     <TouchableOpacity style={styles.registerBtn} disabled={cargando} onPress={enviarForm}>
-                        <Text style={styles.registerText}>Cambiar clave</Text>
+                        {!cargando ? (
+                            <Text style={styles.registerText}>Cambiar clave</Text>
+                        ) : (
+                            <ActivityIndicator size="small" color="#f5f5f5ff" />
+                        )}
+
                     </TouchableOpacity>
                 </View>
             </ScrollView>

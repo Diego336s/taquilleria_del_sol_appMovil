@@ -21,7 +21,10 @@ export default function Dashboard({ navigation }) {
   const [eventos, setEventos] = useState(null);
   const [cargandoEventos, setCargandoEventos] = useState(false);
   const [expandedItems, setExpandedItems] = useState({});
-
+  const [proxima, setProxima] = useState(null);
+  const [cargandoProximaFuncion, setCargandoProximaFuncion] = useState(false);
+  const [contadorDeProximasFunciones, setContadorDeProximasFunciones] = useState("");
+  const [contadorDeFuncionesVistas, setContadorDeFuncionesVistas] = useState("");
   useEffect(() => {
     const cargarPerfil = async () => {
       try {
@@ -56,16 +59,71 @@ export default function Dashboard({ navigation }) {
       }
       setEventos(response?.data?.eventos);
       setCargandoEventos(false);
-      console.log("Eventos cargados");
-      console.log(response.data.eventos);
+
     } catch (error) {
       Alert.alert("Error ❌", error.message || error.response.message || "Error inesperado al mostrar los eventos vigentes.")
       setCargandoEventos(false);
     }
   }
+
+  const cargarProximaFuncion = async () => {
+
+    setCargandoProximaFuncion(true);
+    if (!usuario.id) return;
+
+    try {
+      const response = await api.get("proxima-funcion/" + usuario.id);
+      if (!response.data.success) {
+        setProxima(null);
+        setCargandoProximaFuncion(false);
+        console.log("No hay eventos");
+        return;
+      }
+      setProxima(response?.data?.proxima_funcion);
+      console.log("Proxima Funcion", response?.data?.proxima_funcion)
+      setCargandoProximaFuncion(false);
+      console.log("proxima funcion cargada");
+      console.log(response.data.proxima_funcion);
+    } catch (error) {
+      Alert.alert("Error ❌", error.message || error.response.message || "Error inesperado al mostrar los eventos vigentes.")
+      setCargandoProximaFuncion(false);
+    }
+  }
+
+  const cargarEstadisticas = async () => {
+
+
+    if (!usuario.id) return;
+
+    try {
+      const responseContadorProximaFuncion = await api.get("contador/proxima-funcion/" + usuario.id);
+      if (!responseContadorProximaFuncion.data.success) {
+        setContadorDeProximasFunciones(0);
+        return;
+      }
+
+      const responseContadorFuncionesVistas = await api.get("contador/funciones-vistas/" + usuario.id);
+      if (!responseContadorFuncionesVistas.data.success) {
+        setContadorDeFuncionesVistas(0);
+        return;
+      }
+      setContadorDeFuncionesVistas(responseContadorFuncionesVistas?.data?.funciones_vistas);
+      setContadorDeProximasFunciones(responseContadorProximaFuncion?.data?.proximas_funciones);
+    } catch (error) {
+      Alert.alert("Error ❌", error.message || error.response.message || "Error inesperado al traer la estadistica.")
+      setCargandoProximaFuncion(false);
+    }
+  }
+  useFocusEffect(
+    React.useCallback(() => {
+      cargarProximaFuncion();
+      cargarEstadisticas();
+    }, [usuario])
+  );
   useFocusEffect(
     React.useCallback(() => {
       cargarEventos();
+
     }, [])
   );
 
@@ -80,113 +138,130 @@ export default function Dashboard({ navigation }) {
   return (
 
     <ScrollView contentContainerStyle={styles.scroll}>
-      
+
       <View style={styles.background}>
         {/* Header */}
         <View style={styles.header}>
-
           {usuario?.sexo === "F" ? (
             <Text style={styles.saludo}>¡Bienvenida, {usuario?.nombre}! 👋</Text>
           ) : (
             <Text style={styles.saludo}>¡Bienvenido, {usuario?.nombre}! 👋</Text>
           )}
-          <TouchableOpacity onPress={() => { navigation.navigate("MapaStack"); }} style={styles.btnHeader}>
-            <Text style={styles.btnText}>Explorar Teatro</Text>
-          </TouchableOpacity>
+
         </View>
 
         {/* Stats */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Ionicons name="calendar-outline" size={30} color="#ffffffff" />
-            <Text style={styles.statNumber}>5</Text>
+            <Text style={styles.statNumber}>{contadorDeFuncionesVistas}</Text>
             <Text style={styles.statLabel}>Obras Vistas</Text>
           </View>
           <View style={styles.statCard}>
             <Ionicons name="time-outline" size={30} color="#ffffffff" />
-            <Text style={styles.statNumber}>1</Text>
+            <Text style={styles.statNumber}>{contadorDeProximasFunciones}</Text>
             <Text style={styles.statLabel}>Próxima Función</Text>
           </View>
         </View>
 
-        {/* Próxima función */}
-        <View style={styles.proximaFuncion}>
-          <Text style={styles.proximaTitle}>🎭 Su Próxima Función</Text>
-          <Text style={styles.proximaObra}>Don Juan Tenorio</Text>
-          <Text style={styles.proximaDetalle}>📅 12 Enero ⏰ 8:30 PM 🎟 Palco A12, A13</Text>
-          <TouchableOpacity style={styles.btnDetalle}>
-            <Text style={styles.btnDetalleText}>Ver Detalles</Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Cartelera */}
-        <Text style={styles.carteleraTitle}>Cartelera Actual</Text>
-        {cargandoEventos === true && !eventos && (
+        {proxima && (
+          <View style={styles.proximaFuncion}>
+            <Text style={styles.proximaTitle}>🎭 Su Próxima Función</Text>
+
+            {/* Título del evento */}
+            <Text style={styles.proximaObra}>{proxima?.evento?.titulo}</Text>
+
+            {/* Resumen: solo primer asiento */}
+            <Text style={styles.proximaDetalle}>
+              📅 {proxima?.evento?.fecha_evento}
+              ⏰ {proxima?.evento?.hora_inicio}
+              🎟 {proxima?.asientos?.length} Asientos reservados
+            </Text>
+
+            <TouchableOpacity
+              style={styles.btnDetalle}
+              onPress={() => navigation.navigate("DetalleFuncion", { funcion: proxima })}
+            >
+              <Text style={styles.btnDetalleText}>Ver Detalles</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+
+
+
+        {cargandoEventos === true && !eventos && cargandoProximaFuncion === true && !proxima && (
           <View style={{ backgroundColor: "#2B1B1B" }}>
+
             <ActivityIndicator size="large" color="#f2f2f2ff" />
             <Text style={{ textAlign: "center", paddingTop: 35, color: "white", fontFamily: 30 }}>
-              Cargando Eventos....
+              Cargando informacion
             </Text>
           </View>
         )}
 
-        {cargandoEventos === false && eventos === null ? (
+        {cargandoEventos === false && eventos === null && (
           <View style={{ backgroundColor: "#2B1B1B" }}>
 
+            <Text style={styles.carteleraTitle}>Cartelera Actual</Text>
             <Text style={{ textAlign: "center", paddingTop: 35, color: "white", fontFamily: 30 }}>
               No hay eventos vigentes o registrados
             </Text>
           </View>
-        ) : (
-          <FlatList
-            horizontal
-            data={eventos}
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => {
-              const expanded = expandedItems[item.id] || false;
+        )}{eventos && (
+          <View>
+            {/* Cartelera */}
+            <Text style={styles.carteleraTitle}>Cartelera Actual</Text>
+            <FlatList
+              horizontal
+              data={eventos}
+              keyExtractor={(item) => item.id}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => {
+                const expanded = expandedItems[item.id] || false;
 
-              const descripcionRecortada =
-                !expanded && item.descripcion.length > 50
-                  ? item.descripcion.substring(0, 50) + "..."
-                  : item.descripcion;
+                const descripcionRecortada =
+                  !expanded && item.descripcion.length > 50
+                    ? item.descripcion.substring(0, 50) + "..."
+                    : item.descripcion;
 
-              return (
-                <View style={styles.obraCard}>
-                  <Image source={{ uri: item.imagen }} style={styles.obraImage} />
-                  <View style={styles.obraInfo}>
-                    <Text style={styles.obraCategoria}>{item.categoria.nombre}</Text>
-                    <Text style={styles.obraTitulo}>{item.titulo}</Text>
+                return (
+                  <View style={styles.obraCard}>
+                    <Image source={{ uri: item.imagen }} style={styles.obraImage} />
+                    <View style={styles.obraInfo}>
+                      <Text style={styles.obraCategoria}>{item.categoria.nombre}</Text>
+                      <Text style={styles.obraTitulo}>{item.titulo}</Text>
 
-                    <Text style={styles.obraDesc}>
-                      {descripcionRecortada}
-                      {item.descripcion.length > 50 && (
-                        <Text
-                          style={{ color: "#4C9BFF" }}
-                          onPress={() => toggleExpand(item.id)}
-                        >
-                          {expanded ? " Leer menos" : " Leer más"}
-                        </Text>
-                      )}
-                    </Text>
+                      <Text style={styles.obraDesc}>
+                        {descripcionRecortada}
+                        {item.descripcion.length > 50 && (
+                          <Text
+                            style={{ color: "#4C9BFF" }}
+                            onPress={() => toggleExpand(item.id)}
+                          >
+                            {expanded ? " Leer menos" : " Leer más"}
+                          </Text>
+                        )}
+                      </Text>
 
-                    <Text style={styles.obraFecha}>
-                      📅 {item.fecha} ⏰ {item.hora_inicio} - {item.hora_final}
-                    </Text>
+                      <Text style={styles.obraFecha}>
+                        📅 {item.fecha} ⏰ {item.hora_inicio} - {item.hora_final}
+                      </Text>
 
-                    <TouchableOpacity onPress={()=>{navigation.navigate("MapaEvento",{id: item.id})}} style={styles.btnReservar}>
-                      <Text style={styles.btnReservarText}>Reservar</Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity onPress={() => { navigation.navigate("MapaEvento", { idEvento: item.id, idUsuario: usuario?.id }) }} style={styles.btnReservar}>
+                        <Text style={styles.btnReservarText}>Reservar</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              );
-            }}
 
-
-          />
+                );
+              }}
+            />
+          </View>
         )}
       </View>
-      <ChatBot/>
+      <ChatBot />
     </ScrollView>
 
 

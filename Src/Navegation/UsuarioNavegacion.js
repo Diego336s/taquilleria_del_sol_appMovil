@@ -5,10 +5,12 @@ import Configuraciones_Stack from "./Stack/ConfiguracionesStack";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
+import Entypo from '@expo/vector-icons/Entypo';
+import MisTicketsStack from "./Stack/MisTicketsStack";
 
 const Tab = createBottomTabNavigator();
 
-export default function         UsuarioNavegacion(){
+export default function  UsuarioNavegacion(){
     return(
         <Tab.Navigator
         screenOptions={{
@@ -44,6 +46,17 @@ export default function         UsuarioNavegacion(){
             
             />
 
+                 <Tab.Screen 
+            name="Tickets"
+            component={MisTicketsStack}
+            options={{
+                headerShown: false,
+                tabBarIcon:({color, size}) =>(
+                 <Entypo name="ticket" size={size} color={color} />
+                )
+            }}
+            />
+
                 <Tab.Screen 
             name="Perfil"
             component={Perfil_Stack}
@@ -54,6 +67,7 @@ export default function         UsuarioNavegacion(){
                 )
             }}
             />
+            
 
           <Tab.Screen 
             name="Configuracion"
@@ -65,6 +79,8 @@ export default function         UsuarioNavegacion(){
                 )
             }}
             />
+
+         
             
            
    

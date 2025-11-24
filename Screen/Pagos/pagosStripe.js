@@ -7,32 +7,40 @@ export default function PagosStripe() {
   const route = useRoute();
   const navigation = useNavigation();
   const { url } = route.params; // viene desde el botón “realizarPago”
-
+  const { total } = route.params;
+  const { asientos } = route.params;
   const webviewRef = useRef(null);
   const [loading, setLoading] = useState(true);
 
 
   const handleNavigationChange = (navState) => {
     const { url } = navState;
-
     if (!url) return;
-
     console.log("URL detectada:", url);
+
+
+
 
     // 🔹 Pago exitoso
     if (url.includes("/pago-exitoso")) {
-      
+
       navigation.replace("Confirmacion", {
         estado: "exito",
         url: url,
+        total: total,
+        asientos: asientos
+
       });
     }
+
 
     // 🔹 Pago cancelado
     if (url.includes("/pago-cancelado")) {
       navigation.replace("Confirmacion", {
         estado: "cancelado",
         url: url,
+        total: total,
+        asientos: asientos
       });
     }
   };

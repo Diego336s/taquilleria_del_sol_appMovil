@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 
 
 
@@ -84,7 +84,12 @@ export default function VerificacionDelCodigo({ navigation }) {
 
                     </View>
                     <TouchableOpacity disabled={cargando} style={styles.registerBtn} onPress={enviarForm}>
-                        <Text style={styles.registerText}>Enviar codigo</Text>
+                      
+                           {!cargando ? (
+                                      <Text style={styles.registerText}>Enviar codigo</Text>
+                                  ) : (
+                                    <ActivityIndicator size="small" color="#f5f5f5ff" />
+                                  )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>

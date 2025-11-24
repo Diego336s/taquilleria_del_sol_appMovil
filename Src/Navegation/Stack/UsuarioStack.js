@@ -3,6 +3,9 @@ import Dashboard from "../../../Screen/Usuario/Dashboard";
 import MapaEvento from "../../../Screen/Teatro/Mapa";
 import PagoStripe from "../../../Screen/Pagos/pagosStripe";
 import Confirmacion from "../../../Screen/Pagos/confirmacionPago";
+import DetalleFuncion from "../../../Screen/Usuario/DetallesFuncion";
+import LectorQR from "../../../Screen/QR/lectorQR";
+import DetalleQR from "../../../Screen/QR/detalleQR";
 const Stack = createNativeStackNavigator();
 
 export default function UsuarioStack() {
@@ -26,20 +29,22 @@ export default function UsuarioStack() {
             />
 
             <Stack.Screen
-            name="PagoStripe"
-            component={PagoStripe}
-            options={{title: "Pago de asientos"}}
+                name="PagoStripe"
+                component={PagoStripe}
+                options={{ title: "Pago de asientos" }}
             />
 
-              <Stack.Screen
-            name="Confirmacion"
-            component={Confirmacion}
-            options={{title: "Verificacion del pago"}}
+            <Stack.Screen
+                name="Confirmacion"
+                component={Confirmacion}
+                options={{ title: "Verificacion del pago" }}
             />
-
+            <Stack.Screen
+                name="DetalleFuncion"
+                component={DetalleFuncion}
+                options={{ title: "Detalles del Ticket" }}
+            />
        
-
-
         </Stack.Navigator>
     );
 

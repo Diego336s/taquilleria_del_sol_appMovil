@@ -3,37 +3,38 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert, Lin
 import api from "../../Src/Navegation/Service/Conexion";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 
-export default function MapaTeatroSogamoso({navigation}) {
+export default function MapaTeatroSogamoso({ navigation }) {
   const [asientos, setAsientos] = useState([]);
   const [seleccionados, setSeleccionados] = useState([]); // contiene objetos con info y ID
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
   const [mostrarPalcos, setMostrarPalcos] = useState(false);
+  const [cargandoPago, setCargandoPago] = useState(false);
 
   const route = useRoute();
-  const idEvento = route.params.id;
-
+  const idEvento = route.params.idEvento;
+  const idUsuario = route.params.idUsuario;
 
   useFocusEffect(
     React.useCallback(() => {
-     const cargarAsientos = async () => {
-      try {
-        const response = await api.get("asientos/evento/" + idEvento);
-        setAsientos(
-          (response.data.asientos || []).map((a) => ({
-            ...a,
-            disponible: a.disponible === 1,
-          }))
-        );
-      } catch (error) {
-        console.error("Error al cargar asientos:", error);
-        setError("No se pudieron cargar los asientos.");
-      } finally {
-        setCargando(false);
-      }
-    };
-    cargarAsientos();
+      const cargarAsientos = async () => {
+        try {
+          const response = await api.get("asientos/evento/" + idEvento);
+          setAsientos(
+            (response.data.asientos || []).map((a) => ({
+              ...a,
+              disponible: a.disponible === 1,
+            }))
+          );
+        } catch (error) {
+          console.error("Error al cargar asientos:", error);
+          setError("No se pudieron cargar los asientos.");
+        } finally {
+          setCargando(false);
+        }
+      };
+      cargarAsientos();
     }, [idEvento])
   );
   // 🔹 Alternar selección
@@ -80,30 +81,47 @@ export default function MapaTeatroSogamoso({navigation}) {
   });
 
   const realizarPago = async () => {
-  if (seleccionados.length === 0) {
-    Alert.alert("Sin asientos", "Debes seleccionar al menos un asiento.");
-    return;
-  }
-
-  try {
-    const data = {
-       evento_id: idEvento,
-      total: total,
-      asientos: seleccionados.map((a) => a.id),
-    };
-
-    const response = await api.post("/pago/stripe", data);
-    const { url } = response.data;
-  console.log("Respuesta del pago", url);
-
-    if (url) {
-      navigation.navigate("PagoStripe", { url: url });
+    setCargandoPago(true);
+    if (seleccionados.length === 0) {
+      Alert.alert("Sin asientos", "Debes seleccionar al menos un asiento.");
+      setCargandoPago(false);
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    Alert.alert("Error", "No se pudo iniciar el pago con Stripe.");
-  }
-};
+
+    if (seleccionados.length > 10) {
+      Alert.alert("Limite superado", "Solo puedes seleccionar 10 asientos por compra.");
+      setCargandoPago(false);
+      return;
+    }
+
+
+    try {
+      const data = {
+        asientos: seleccionados.map((a) => a.id),
+        id_evento: idEvento,
+        total: total,
+        id_cliente: idUsuario
+      };
+   
+      const response = await api.post("/pago/stripe", data);
+      const { url } = response.data;    
+        
+      
+      if (url) {
+        "Redirigiendo"
+        navigation.navigate("PagoStripe", { url: url, asientos: seleccionados, total:total });
+        setCargandoPago(false);
+      }
+      if (response.data.message && !response.data.success) {
+        Alert.alert("Error", response.data?.message)
+      }
+      setCargandoPago(false);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "No se pudo iniciar el pago con Stripe.");
+      setCargandoPago(false);
+    }
+  };
 
 
   // 🔹 Estados de carga
@@ -213,8 +231,8 @@ export default function MapaTeatroSogamoso({navigation}) {
                         backgroundColor: !disponible
                           ? "#9ca3af"
                           : seleccionado
-                          ? "#623b0e"
-                          : "#ffd344",
+                            ? "#623b0e"
+                            : "#ffd344",
                         borderWidth: 1,
                         borderColor: "#3b3b3b",
                       }}
@@ -265,6 +283,7 @@ export default function MapaTeatroSogamoso({navigation}) {
 
             {/* 🔘 Botón de pago */}
             <TouchableOpacity
+              disabled={cargandoPago}
               onPress={realizarPago}
               style={{
                 marginTop: 15,
@@ -273,16 +292,20 @@ export default function MapaTeatroSogamoso({navigation}) {
                 borderRadius: 10,
               }}
             >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  fontSize: 16,
-                }}
-              >
-                💳 Pagar y Reservar
-              </Text>
+              {!cargandoPago ? (
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    fontSize: 16,
+                  }}
+                >
+                  💳 Pagar y Reservar
+                </Text>) : (
+                <ActivityIndicator size="small" color="#f5f5f5ff" />
+              )}
+
             </TouchableOpacity>
           </View>
         ) : (

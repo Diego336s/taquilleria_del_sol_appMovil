@@ -5,43 +5,54 @@ import { Alert } from "react-native";
 
 export const login = async (correo, clave) => {
     try {
-        const response = await api.post("/login/cliente", { correo, clave });
-       
+        const response = await api.post("login/admin-cliente", { correo, clave });
+
+        // ❌ Si el backend responde success = false
         if (!response.data.success) {
             return {
                 success: false,
-                message: response.data.message
-            }
+                message: response.data.message || "Credenciales incorrectas"
+            };
         }
+
         console.log("Datos de login", response.data);
+
         const token = response.data.token;
-        if (token) {
-            
-            await AsyncStorage.setItem("userToken", token);
-            console.log("Token guardado correctamente ✅")
-        } else {
-            console.error("No se recibio el token en la respuesta");
+        const rol = response.data.rol;
+
+        // 🔥 Validar token
+        if (!token) {
             return {
                 success: false,
-                message: "No se recibio el token en la respuesta"
-            }
+                message: "No se recibió el token en la respuesta del servidor.",
+            };
         }
+
+        // 🔥 Guardar token y rol
+        await AsyncStorage.setItem("userToken", token);
+        await AsyncStorage.setItem("rolUser", rol);
+
+        console.log("Token y rol guardados correctamente ✅");
+
         return {
             success: true,
-            message: response.data.message
-        }
+            message: response.data.message || "Inicio de sesión exitoso",
+        };
 
     } catch (error) {
 
-        console.log("Error al iniciar sesión:", error?.message);
+        console.log("Error al iniciar sesión:", error);
+
         return {
             success: false,
-            message: error?.message || error?.response?.message || "Error de conexión con el servidor",
+            message:
+                error?.response?.data?.message ||
+                error?.message ||
+                "Error de conexión con el servidor",
         };
-
     }
+};
 
-}
 
 export const registrar = async (nombre, apellido, documento, fechaString, sexo, telefono, correo, clave) => {
     const fecha_nacimiento = dayjs(fechaString).format("YYYY-MM-DD");
@@ -55,8 +66,10 @@ export const registrar = async (nombre, apellido, documento, fechaString, sexo, 
             }
         }
         const token = response.data.token_access;
+        const rol = response.data.rol;
         if (token) {
             await AsyncStorage.setItem("userToken", token);
+            await AsyncStorage.setItem("rolUser", rol);
         } else {
             Alert.alert("Error de token", "No sea podido obtener el token al momento de registro, Inicia sesion");
             return;
@@ -83,6 +96,7 @@ export const logout = async () => {
             }
         }
         await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem("rolUser");
         return {
             success: true,
             message: response.data.message
@@ -104,20 +118,20 @@ export const enviarCodigoDeVerificacion = async (email) => {
                 message: response.data.message
             }
         }
-        return{
+        return {
             success: true,
             message: response.data.message
         }
     } catch (error) {
-      return{
-        success: false,
-        message: error?.message || response?.error || "Error inesperado en el servidor"
-      }
+        return {
+            success: false,
+            message: error?.message || response?.error || "Error inesperado en el servidor"
+        }
     }
 }
 
-export const verificarCodigo = async (correo, codigo) =>{
-  try {
+export const verificarCodigo = async (correo, codigo) => {
+    try {
         const response = await api.post("verificar/codigo", { correo, codigo });
         if (!response.data.success) {
             return {
@@ -125,15 +139,15 @@ export const verificarCodigo = async (correo, codigo) =>{
                 message: response.data.message
             }
         }
-        return{
+        return {
             success: true,
             message: response.data.message
         }
     } catch (error) {
-      return{
-        success: false,
-        message: error?.message || response?.error  || "Error inesperado en el servidor"
-      }
+        return {
+            success: false,
+            message: error?.message || response?.error || "Error inesperado en el servidor"
+        }
     }
 }
 
@@ -146,15 +160,15 @@ export const restablecerClave = async (correo, clave) => {
                 message: response.data.message
             }
         }
-        return{
+        return {
             success: true,
             message: response.data.message
         }
     } catch (error) {
-      return{
-        success: false,
-        message: error?.message || response?.error  || "Error inesperado en el servidor"
-      }
+        return {
+            success: false,
+            message: error?.message || response?.error || "Error inesperado en el servidor"
+        }
     }
 }
 
@@ -198,7 +212,7 @@ export const cambiarCorreo = async (id, correo) => {
                 message: response.data.message
             }
         }
-      
+
         return {
             success: true,
             message: response.data.message

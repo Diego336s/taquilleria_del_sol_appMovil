@@ -2,12 +2,12 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
-export default function Confirmacion({navigation}) {
+export default function Confirmacion({ navigation }) {
   const route = useRoute();
 
 
   // Datos recibidos desde Stripe o desde tu reserva
-  const { total, asientos, orderId } = route.params ?? {};
+  const { total, asientos } = route.params ?? {};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -19,15 +19,8 @@ export default function Confirmacion({navigation}) {
           Tu compra ha sido procesada correctamente.
         </Text>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>Número de orden:</Text>
-          <Text style={styles.value}>{orderId ?? "N/A"}</Text>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>Total pagado:</Text>
-          <Text style={styles.value}>${total?.toLocaleString("es-CO")}</Text>
-        </View>
+
 
         <View style={styles.section}>
           <Text style={styles.label}>Asientos reservados:</Text>
@@ -41,7 +34,14 @@ export default function Confirmacion({navigation}) {
             <Text style={{ color: "#777" }}>No se recibieron asientos.</Text>
           )}
         </View>
-
+        
+        <View style={styles.section}>
+          <Text style={styles.label}>Total pagado:</Text>
+          <Text style={styles.value}>${total?.toLocaleString("es-CO")}</Text>
+        </View>
+        <Text style={styles.text}>
+          Tu ticket sera enviado a tu correo muchas grascias por tu compra
+        </Text>
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.replace("Dashboard")}

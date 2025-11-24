@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity,  ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import { logout } from "../../Src/Navegation/Service/AuthService";
 
 
-export default function ConfiguracionesScreen({ navigation }) {  
+export default function ConfiguracionesScreen({ navigation }) {
 
   const [cargando, setCargando] = useState(false);
-  const cerrarSesion = async()=>{
+  const cerrarSesion = async () => {
     setCargando(true);
     const response = await logout();
-    if(!response.success){
-     Alert.alert("Cierre de sesion ❌",response.message);
-     setCargando(false);
-     return;
+    if (!response.success) {
+      Alert.alert("Cierre de sesion ❌", response.message);
+      setCargando(false);
+      return;
     }
     Alert.alert("Cierre de sesion ✅", response.message);
     setCargando(false);
@@ -40,8 +40,12 @@ export default function ConfiguracionesScreen({ navigation }) {
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Otros</Text>
 
-        <TouchableOpacity disabled={cargando} onPress={()=>{cerrarSesion()}} style={styles.option}>
-          <Text style={[styles.optionText, { color: "white" }]}>🚪 Cerrar Sesión</Text>
+        <TouchableOpacity disabled={cargando} onPress={() => { cerrarSesion() }} style={styles.option}>
+          {!cargando ? (
+            <Text style={[styles.optionText, { color: "white" }]}>🚪 Cerrar Sesión</Text>
+          ) : (
+            <ActivityIndicator size="small" color="#f5f5f5ff" />
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>

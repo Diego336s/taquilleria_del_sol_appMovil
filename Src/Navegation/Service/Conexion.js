@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const URL = "https://clinic-thereafter-jumping-materials.trycloudflare.com/api";
+const URL = "https://careers-raymond-enterprises-means.trycloudflare.com/api";
 
 const api = axios.create({
     baseURL: URL,
@@ -13,7 +13,7 @@ const api = axios.create({
 
 //Rutas de api que no requiren autenticacion
 const RutasPublicas = [
-    "/login/cliente",
+    "login/admin-cliente",
     "/registrar/cliente",
     "envio/codigo/verificacion",
     "verificar/codigo",

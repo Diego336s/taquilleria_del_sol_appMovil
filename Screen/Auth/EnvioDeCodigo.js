@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 
 
 
@@ -30,9 +30,9 @@ export default function EnvioCodigoDeVerificacion({ navigation }) {
                 return;
             }
             Alert.alert("Codigo enviado ✅", response.message)
-           
+
             navigation.navigate("VerificacionDelCodigo", { correo: correo });
-             setCargando(true);
+            setCargando(true);
         } catch (error) {
             Alert.alert("Error inesperado ❌", error.message)
         }
@@ -46,7 +46,7 @@ export default function EnvioCodigoDeVerificacion({ navigation }) {
         >
             < ScrollView contentContainerStyle={styles.scroll}>
                 <View style={styles.container}>
-              
+
                     <View style={styles.form}>
                         <Text style={styles.title}>Enviar codigo de verficacion 📧</Text>
                         <TextInput
@@ -60,7 +60,12 @@ export default function EnvioCodigoDeVerificacion({ navigation }) {
 
                     </View>
                     <TouchableOpacity style={styles.registerBtn} disabled={cargando} onPress={enviarForm}>
-                        <Text style={styles.registerText}>Enviar codigo</Text>
+                        {!cargando ? (
+                            <Text style={styles.registerText}>Enviar codigo</Text>
+                        ) : (
+                            <ActivityIndicator size="small" color="#f5f5f5ff" />
+                        )}
+
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#A0522D",
         padding: 20,
         borderRadius: 10,
-        marginBottom:30
+        marginBottom: 30
     },
     select: {
         backgroundColor: "#334155",

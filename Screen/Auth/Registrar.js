@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   ImageBackground,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { registrar } from "../../Src/Navegation/Service/AuthService";
@@ -176,7 +177,11 @@ export default function Registro({ navigation }) {
               />
 
               <TouchableOpacity style={styles.boton} disabled={cargando} onPress={handleRegistro}>
-                <Text style={styles.botonTexto}>Registrar</Text>
+                {!cargando ? (
+                  <Text style={styles.botonTexto}>Registrar</Text>
+                ) : (
+                  <ActivityIndicator size="small" color="#f5f5f5ff" />
+                )}
               </TouchableOpacity>
 
               <Text style={styles.textoCuenta}>
