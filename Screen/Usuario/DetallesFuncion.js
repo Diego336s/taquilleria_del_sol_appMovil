@@ -52,8 +52,19 @@ const styles = StyleSheet.create({
     value: { color: "white", marginLeft: 5 },
     sectionTitle: { color: "white", fontSize: 20, fontWeight: "bold", marginVertical: 10 },
     asientosBox: { backgroundColor: "#A0522D", padding: 10, borderRadius: 10 },
-    asientoItem: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 5 },
-    asientoText: { color: "white", fontSize: 16 },
+  asientoItem: {
+    paddingVertical: 5,
+    width: "100%",
+},
+
+   asientoText: {
+    color: "#FFF",
+    fontSize: 16,
+    flexShrink: 1,   // IMPORTANTE: evita desbordes
+    flexWrap: "wrap",
+    width: "100%",   // Asegura que respete el contenedor
+},
+
     price: { color: "white", fontSize: 16, fontWeight: "bold" },
     totalBox: { marginTop: 30, padding: 15, backgroundColor: "#e0ffe4", borderRadius: 10 },
     totalLabel: { fontSize: 18, fontWeight: "bold" },
